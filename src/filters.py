@@ -1,6 +1,17 @@
 import numpy as np
 import networkx as nx
+from src.experimental_WL_filter_helpers import compute_wl_labels, l1_distance, label_to_counter
 
+
+def get_filters():
+    FILTERS ={
+        'forman ricci': forman_ricci_weights,
+        'degree': degree_weights,
+        'laplacian': laplacian_weights,
+        'hks': hks_weights,
+        'wl': wl_weights
+    }
+    return FILTERS
 
 def forman_ricci_weights(G : nx.Graph, superlevelfiltration : bool = False) -> nx.Graph:
 
@@ -22,7 +33,7 @@ def forman_ricci_weights(G : nx.Graph, superlevelfiltration : bool = False) -> n
     return G_
 
 
-def degree_weights(G : nx.Graph, superlevelfiltration : bool = True) -> nx.Graph:
+def degree_weights(G : nx.Graph, superlevelfiltration : bool = False) -> nx.Graph:
     '''
     Returns a weighted graph suitable for a superlevel filtration.
     '''
@@ -77,4 +88,30 @@ def hks_weights(G : nx.Graph, t: float = 10.0, superlevelfiltration: bool = Fals
         G_.nodes[v]['weight'] = sign * list[v]
     for v, u in G.edges():
         G_[v][u]['weight'] = sign * (max(list[v], list[u]))
+    return G_
+
+
+
+def wl_weights(G: nx.Graph, superlevelfiltration: bool = False, tau: float = 1) -> nx.Graph:
+
+    lbs, prev_lbs = compute_wl_labels(G)
+    counters = [label_to_counter(l) for l in lbs]
+
+    if superlevelfiltration:
+        sign = -1
+    else:
+        sign = 1
+
+    G_ = G.copy()
+    for v, u in G.edges():
+        G_[v][u]['weights'] = sign*(int(prev_lbs[v] != prev_lbs[u]) + l1_distance(counters[v], counters[u]) + tau)
+
+    for v in G.nodes():
+        nbr_weights = [
+        G_[v][nbr]['weights']
+        for nbr in G_.neighbors(v)
+        ]
+        nbr_weights.append(0)
+        G_.nodes[v]['weights'] = sign*max(nbr_weights)
+
     return G_

@@ -36,13 +36,14 @@ def neighbour_labels_aggregation(G, node, labels):
     neighbour_lbls = sorted(str(labels[nbr]) for nbr in G.neighbors(node))
     return str(labels[node]) + "|" + ",".join(neighbour_lbls)
 
-def compute_stable_labels(G, labels=None):
+def compute_wl_labels(G, labels=None, max_iterations: int = 3, stable_labels: bool = False):
     if labels is None:
         labels = []
         for v in G.nodes():
             labels.append(str(G.degree(v)))
 
-    max_iterations = len(labels)
+    if stable_labels:
+        max_iterations = len(labels)
     prev_labels = None
     colors = convert_labels_to_colors(labels)
     for _ in range(max_iterations):
@@ -82,20 +83,6 @@ def l1_distance(c1, c2):
 
 
 
-def get_wl_weights(G):
-
-    lbs, prev_lbs = compute_stable_labels(G)
-    counters = [label_to_counter(l) for l in lbs]
-
-
-    D_L = []
-    for v in G.nodes():
-        s = 0
-        for nbr in G.neighbors(v):
-            s += int(prev_lbs[v] != prev_lbs[nbr]) + l1_distance(counters[v], counters[nbr])
-        D_L.append(s/(G.degree(v)+1))
-
-    return D_L
 
 
 

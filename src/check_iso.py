@@ -3,6 +3,7 @@ import networkx as nx
 import multipers as mp
 from src.bifiltrations import construct_bifiltration
 
+
 import multipers.array_api.numpy as _mp_np_api
 
 def _patched_device(x):
@@ -22,13 +23,14 @@ def to_dict(pts, weights, decimals: int = 8) -> dict:
     return d
 
 def signed_measure_dist(G1: nx.Graph, G2: nx.Graph, degree: int = 0,
-                        max_dim: int=2, Rips: bool =False) -> float:
+                        max_dim: int=2, Rips: bool =False,
+                        filter_1: str = 'laplacian', filter_2: str = 'forman ricci') -> float:
     """
 
     """
-
-    st1 = construct_bifiltration(G1, max_dim=max_dim, Rips=Rips)
-    st2 = construct_bifiltration(G2, max_dim=max_dim, Rips=Rips)
+ 
+    st1 = construct_bifiltration(G1, max_dim=max_dim, Rips=Rips, filter_1=filter_1, filter_2=filter_2)
+    st2 = construct_bifiltration(G2, max_dim=max_dim, Rips=Rips, filter_1=filter_1, filter_2=filter_2)
 
     sm1 = mp.signed_measure(st1, invariant="rank", degree=degree)[0]
     sm2 = mp.signed_measure(st2, invariant="rank", degree=degree)[0]
@@ -50,14 +52,20 @@ def signed_measure_dist(G1: nx.Graph, G2: nx.Graph, degree: int = 0,
 
     return distance
 
-def check_if_graphs_are_isomorphic(G1: nx.Graph, G2: nx.Graph, max_dim: int = 2, Rips: bool = False, threshold: float = 10e-8) -> bool:
+def check_if_graphs_are_isomorphic(G1: nx.Graph, 
+                                   G2: nx.Graph, 
+                                   max_dim: int = 2, 
+                                   Rips: bool = False, 
+                                   filter_1: str = 'laplacian',
+                                   filter_2: str = 'forman ricci',
+                                   threshold: float = 10e-8) -> bool:
     """
     Checks if two graphs are isomorphic by comparing their signed measures.
     """
     graphs_are_isomorphic = True
 
     for degree in range(1, max_dim + 1):
-        distance = signed_measure_dist(G1, G2, degree=degree, max_dim=max_dim, Rips=Rips)
+        distance = signed_measure_dist(G1, G2, degree=degree, max_dim=max_dim, Rips=Rips, filter_1=filter_1, filter_2=filter_2)
     
         if distance > threshold:
             graphs_are_isomorphic = False
