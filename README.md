@@ -35,6 +35,7 @@ The `external/` folder contains two non-original GitHub repositories, both refer
 ## TODO
  
 - [ ] Add filters
+- [ ] Rething superlevel vs sublevel filtrations
 - [ ] Make script executable
 - [ ] Simplify and/or rethink how arguments are passed
 ---
