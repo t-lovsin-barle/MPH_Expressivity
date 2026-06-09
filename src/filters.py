@@ -47,7 +47,7 @@ def degree_weights(G : nx.Graph, superlevelfiltration : bool = False) -> nx.Grap
     for v in G.nodes():
         G_.nodes[v]['weight'] = sign * G.degree(v)
     for v, u in G.edges():
-        G_[v][u]['weight'] = sign * (max(G.degree(v), G.degree(u)))
+        G_[v][u]['weight'] = sign * (min(G.degree(v), G.degree(u)))
     return G_
 
 def laplacian_weights(G : nx.Graph, superlevelfiltration : bool= False) -> nx.Graph:
