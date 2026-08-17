@@ -14,7 +14,7 @@ def load_BREC_data():
         'DR':'dr.npy'
     }
 
-    path = Path(r'.\external\BREC\customize\Data\raw')
+    path = Path(__file__).resolve().parent.parent / 'external' / 'BREC' / 'customize' / 'Data' / 'raw'
     BREC_GRAPHS = {}
 
     for graph_set, filename in BREC_DATA.items():
