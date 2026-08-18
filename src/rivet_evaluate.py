@@ -6,8 +6,7 @@ from src.rivet_check_iso import check_if_graphs_are_isomorphic
 
 def evaluate_on_BREC(
     max_dim: int = 2,
-    Rips: bool = True,
-    grid_size: int = 50,
+    Rips: bool = True
 ) -> dict:
 
     all_graphs = load_BREC_data()
@@ -37,7 +36,6 @@ def evaluate_on_BREC(
                     G2,
                     max_dim=max_dim,
                     Rips=Rips,
-                    grid_size=grid_size,
                 )
 
         elif graph_battery == 'DR':
@@ -54,7 +52,6 @@ def evaluate_on_BREC(
                     G2,
                     max_dim=max_dim,
                     Rips=Rips,
-                    grid_size=grid_size,
                 )
 
         elif graph_battery in {
@@ -74,7 +71,6 @@ def evaluate_on_BREC(
                     G2,
                     max_dim=max_dim,
                     Rips=Rips,
-                    grid_size=grid_size,
                 )
 
         elif graph_battery == 'extension':
@@ -91,7 +87,6 @@ def evaluate_on_BREC(
                     G2,
                     max_dim=max_dim,
                     Rips=Rips,
-                    grid_size=grid_size,
                 )
 
         results[graph_battery] = score / total

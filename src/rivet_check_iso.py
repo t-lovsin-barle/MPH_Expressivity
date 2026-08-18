@@ -1,7 +1,7 @@
 import networkx as nx
 
-from pyrivet import matching_distance
 from src.rivet_bifiltration import construct_bifiltration
+from src.fibered_lines import wall_matching_distance
 
 
 def matching_dist(
@@ -10,36 +10,33 @@ def matching_dist(
     degree: int = 0,
     max_dim: int = 2,
     Rips: bool = True,
-    grid_size: int = 20,
 ) -> float:
     """
-    Compute the matching distance between the RIVET degree-Rips
-    bifiltrations of G1 and G2.
+    Compute the wall-based matching distance between the RIVET
+    degree-Rips bifiltrations of G1 and G2.
     """
     if degree not in (0, 1):
         raise ValueError(
             "The RIVET implementation currently supports H_0 and H_1."
         )
 
-    m1 = construct_bifiltration(
+    m1, ms1 = construct_bifiltration(
         G1,
         max_dim=max_dim,
         Rips=Rips,
         homology=degree,
     )
 
-    m2 = construct_bifiltration(
+    m2, ms2 = construct_bifiltration(
         G2,
         max_dim=max_dim,
         Rips=Rips,
         homology=degree,
     )
 
-    return matching_distance.matching_distance(
-        m1,
-        m2,
-        grid_size=grid_size,
-        normalize=True,
+    return wall_matching_distance(
+        m1, ms1, m2, ms2,
+        homology=degree,
     )
 
 
@@ -48,12 +45,11 @@ def check_if_graphs_are_isomorphic(
     G2: nx.Graph,
     max_dim: int = 2,
     Rips: bool = True,
-    grid_size: int = 20,
     threshold: float = 1e-7,
 ) -> bool:
     """
-    Checks whether two graphs are distinguished by the matching
-    distances of their RIVET degree-Rips bifiltrations.
+    Checks whether two graphs are distinguished by the wall-based
+    matching distances of their RIVET degree-Rips bifiltrations.
 
     Both H_0 and H_1 are tested.
     """
@@ -66,7 +62,6 @@ def check_if_graphs_are_isomorphic(
             degree=degree,
             max_dim=max_dim,
             Rips=Rips,
-            grid_size=grid_size,
         )
 
         if distance > threshold:

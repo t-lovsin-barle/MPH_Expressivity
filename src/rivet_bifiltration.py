@@ -85,7 +85,9 @@ def build_rips_bifiltration(
         distance_matrix=distance_matrix,
     )
 
-    return rivet.compute_metric_space(
+    module = rivet.compute_metric_space(
         metric_space,
         homology=homology,
     )
+
+    return module, metric_space
